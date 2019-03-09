@@ -96,7 +96,7 @@ class PresensiKuliahController extends Controller
 							'pertemuan_kuliah.*',
 							'mata_kuliah.id as id_mata_kuliah',
 							'users.name as created_by',
-							'users.name as created_at',
+							'pertemuan_kuliah.waktu_pertemuan as created_at',
 						]);
 
 		$datatables = Datatables::of($data);
