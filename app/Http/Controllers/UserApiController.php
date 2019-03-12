@@ -48,6 +48,7 @@ class UserApiController extends Controller
 
         $return['status'] = "success";
         $return['message'] = "Login Successfully";
+        DB::statement(DB::raw('set @photo="https://cdn0.iconfinder.com/data/icons/kameleon-free-pack-rounded/110/Student-3-512.png"'));
         $return['data']['user'] = User::leftJoin('dosen', 'users.id', 'dosen.id_user')
                                         ->where('users.id', $user->id)
                                         ->get([
@@ -58,6 +59,7 @@ class UserApiController extends Controller
                                             'dosen.nip',
                                             'dosen.alamat',
                                             'dosen.email',
+                                            DB::raw('@photo'),
                                         ])->first();
         $return['data']['token'] = $token;
 
