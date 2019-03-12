@@ -59,7 +59,7 @@ class UserApiController extends Controller
                                             'dosen.nip',
                                             'dosen.alamat',
                                             'dosen.email',
-                                            DB::raw('@photo'),
+                                            DB::raw('@photo as photo'),
                                         ])->first();
         $return['data']['token'] = $token;
 
