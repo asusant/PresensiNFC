@@ -36,6 +36,7 @@ class DosenController extends Controller
 			'email' => 'required|email',
 			'phone' => 'required|numeric',
 			'alamat' => 'required|string',
+			'photo' => 'nullable|image'
 		);
 		$this->create_form = array(
 			'Nama' => Form::text('nama', old('nama'), ['class' => 'form-control', 'placeholder' => 'Contoh: Sukaryo S.Pd., M.Pd.', ] ),
@@ -46,6 +47,7 @@ class DosenController extends Controller
 			'Password' => Form::password('password', ['class' => 'form-control', 'placeholder' => 'Login Password', ] ),
 			'Confirm Password' => Form::password('password_confirmation', ['class' => 'form-control', 'placeholder' => 'Retype Password', ] ),
 			'Nomor HP' => Form::text('phone', old('phone'), ['class' => 'form-control', 'placeholder' => 'Contoh: 081234567890', ] ),
+			'Foto' => Form::file('photo', $attributes = ['class' => 'form-control'])
 		);
 		$this->update_form = array(
 			'Nama' => Form::text('nama', old('nama'), ['class' => 'form-control', 'placeholder' => 'Contoh: Sukaryo S.Pd., M.Pd.', 'id' => 'nama'] ),
@@ -56,6 +58,7 @@ class DosenController extends Controller
 			'Password' => Form::password('password', ['class' => 'form-control', 'placeholder' => 'Login Password or Empty', 'id'=>'password'] ),
 			'Confirm Password' => Form::password('password_confirmation', ['class' => 'form-control', 'placeholder' => 'Retype Password or Empty', 'id'=>'password_confirmation'] ),
 			'Nomor HP' => Form::text('phone', old('phone'), ['class' => 'form-control', 'placeholder' => 'Contoh: 081234567890', 'id'=>'phone'] ),
+			'Foto' => Form::file('photo', $attributes = ['class' => 'form-control'])
 		);
 	}
 
@@ -138,6 +141,13 @@ class DosenController extends Controller
 		//
         $addedUser = new User;
 
+        if ($request->hasFile('photo')){
+			$file = $request->file('photo');
+			$addedUser->photo = time() . '.' . $file->getClientOriginalExtension();
+
+            $request->file('photo')->move("uploads", $addedUser->photo);
+		}
+
         $addedUser->name = $request->input('nama');
         $addedUser->username = $request->input('username');
         $addedUser->password = bcrypt($request->input('password'));
@@ -202,6 +212,13 @@ class DosenController extends Controller
 		$user->name = $request->input('nama');
         $user->username = $request->input('username');
         $user->phone = $request->input('phone');
+
+        if ($request->hasFile('photo')){
+			$file = $request->file('photo');
+			$user->photo = time() . '.' . $file->getClientOriginalExtension();
+
+            $request->file('photo')->move("uploads", $user->photo);
+		}
 
         if (null !== $request->input('password')) {
 			$user->password = bcrypt($request->input('password'));

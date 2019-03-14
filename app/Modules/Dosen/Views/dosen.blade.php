@@ -61,7 +61,7 @@ use App\Models\Content;
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
     		</div>
     		<div class="modal-body">
-    			<form class="form-horizontal form-element" action="{{ $create_route }}" method="POST">
+    			<form class="form-horizontal form-element" enctype="multipart/form-data" action="{{ $create_route }}" method="POST">
     				{{ csrf_field() }}
 						@foreach ($create_form as $key => $value)
 							<div class="row form-group {{ $errors->has($key) ? ' has-error' : '' }}">
@@ -118,7 +118,7 @@ use App\Models\Content;
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
   			</div>
   			<div class="modal-body">
-  				<form class="form-horizontal form-element" action="{{ $update_route }}" method="POST">
+  				<form class="form-horizontal form-element" enctype="multipart/form-data" action="{{ $update_route }}" method="POST">
   					{{ csrf_field() }}
   					<input type="hidden" name="edit_id" id="edit_id" value="">
 						@foreach ($update_form as $key => $value)
