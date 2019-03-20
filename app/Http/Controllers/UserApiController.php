@@ -207,6 +207,7 @@ class UserApiController extends Controller
         $dataReturn['nama'] = $mhs->name;
         $dataReturn['nim'] = $mhs->nim;
         $dataReturn['waktu_presensi'] = date('H:i', strtotime($presensi->created_at));
+        $dataReturn['photo'] = asset('uploads'.'/'.$mhs->photo);
 
         $return['status'] = "success";
         $return['message'] = "Presensi berhasil ditambahkan.";
