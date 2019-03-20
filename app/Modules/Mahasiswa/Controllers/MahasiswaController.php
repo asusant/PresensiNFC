@@ -35,8 +35,8 @@ class MahasiswaController extends Controller
 	public function __construct()
 	{
 		$jurusan = Jurusan::pluck('jurusan', 'id')->toArray();
-		$this->column_title = array('Nama Mahasiswa', 'NIM', 'Jurusan', 'Username', 'Email', 'Alamat', 'Nomor HP');
-		$this->ajax_field = array(['nama', 'nim', 'id_jurusan', 'username', 'email', 'alamat', 'phone'], [0,1,2,3,4,5,6]);
+		$this->column_title = array('Nama Mahasiswa', 'NIM', 'Jurusan', 'Username', 'Email', 'Alamat', 'Nomor HP', 'Foto');
+		$this->ajax_field = array(['nama', 'nim', 'id_jurusan', 'username', 'email', 'alamat', 'phone', 'photo'], [0,1,2,3,4,5,6]);
 		$this->validation = array(
 			'nama' => 'required|string|max:100',
 			'id_jurusan' => 'required|exists:jurusan,id',
@@ -44,6 +44,7 @@ class MahasiswaController extends Controller
 			'email' => 'required|email',
 			'phone' => 'required|numeric',
 			'alamat' => 'required|string',
+			'photo' => 'nullable|image'
 		);
 		$this->create_form = array(
 			'Nama' => Form::text('nama', old('nama'), ['class' => 'form-control', 'placeholder' => 'Contoh: Victor Sukarto', ] ),
@@ -55,6 +56,7 @@ class MahasiswaController extends Controller
 			'Password' => Form::password('password', ['class' => 'form-control', 'placeholder' => 'Login Password', ] ),
 			'Confirm Password' => Form::password('password_confirmation', ['class' => 'form-control', 'placeholder' => 'Retype Password', ] ),
 			'Nomor HP' => Form::text('phone', old('phone'), ['class' => 'form-control', 'placeholder' => 'Contoh: 081234567890', ] ),
+			'Foto' => Form::file('photo', $attributes = ['class' => 'form-control'])
 		);
 		$this->update_form = array(
 			'Nama' => Form::text('nama', old('nama'), ['class' => 'form-control', 'placeholder' => 'Contoh: Sukarto S.Pd., M.Pd.', 'id' => 'nama'] ),
@@ -66,6 +68,7 @@ class MahasiswaController extends Controller
 			'Password' => Form::password('password', ['class' => 'form-control', 'placeholder' => 'New Password or Empty', 'id'=>'password'] ),
 			'Confirm Password' => Form::password('password_confirmation', ['class' => 'form-control', 'placeholder' => 'Retype Password or Empty', 'id'=>'password_confirmation'] ),
 			'Nomor HP' => Form::text('phone', old('phone'), ['class' => 'form-control', 'placeholder' => 'Contoh: 081234567890', 'id'=>'phone'] ),
+			'Foto' => Form::file('photo', $attributes = ['class' => 'form-control'])
 		);
 		$this->upload_form = array(
 			'Upload File' => Form::file('file', ['class' => 'form-control', ]),
@@ -184,7 +187,8 @@ class MahasiswaController extends Controller
 							'mahasiswa.email as email',
 							'mahasiswa.alamat as alamat',
 							'mahasiswa.nim as nim',
-							'jurusan.jurusan as id_jurusan'
+							'jurusan.jurusan as id_jurusan',
+							'users.photo'
 						]);
 
 		$datatables = Datatables::of($data);
@@ -194,6 +198,9 @@ class MahasiswaController extends Controller
 
 		return $datatables
 			->orderColumn('mahasiswa', 'mahasiswa $1')
+			->editColumn('photo', function ($data) {
+				return "<img src='".asset('uploads'.'/'.$data->photo)."' alt='Photo' max-height='50px'>";
+			})
 			->addColumn('action', function ($data) {
 				$update = "";
 				$validate = "";
@@ -223,6 +230,13 @@ class MahasiswaController extends Controller
 		// Add User
 		//
         $addedUser = new User;
+
+        if ($request->hasFile('photo')){
+			$file = $request->file('photo');
+			$addedUser->photo = time() . '.' . $file->getClientOriginalExtension();
+
+            $request->file('photo')->move("uploads", $addedUser->photo);
+		}
 
         $addedUser->name = $request->input('nama');
         $addedUser->username = $request->input('username');
@@ -287,6 +301,13 @@ class MahasiswaController extends Controller
 		// Update User
 		//
 		$user = User::find($request->input('edit_id'));
+
+		if ($request->hasFile('photo')){
+			$file = $request->file('photo');
+			$user->photo = time() . '.' . $file->getClientOriginalExtension();
+
+            $request->file('photo')->move("uploads", $user->photo);
+		}
 
 		$user->name = $request->input('nama');
         $user->username = $request->input('username');

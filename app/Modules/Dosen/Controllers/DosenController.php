@@ -28,8 +28,8 @@ class DosenController extends Controller
 
 	public function __construct()
 	{
-		$this->column_title = array('ID Dosen','Nama Dosen', 'NIP', 'Username', 'Email', 'Alamat', 'Nomor HP');
-		$this->ajax_field = array(['id','nama', 'nip', 'username', 'email', 'alamat', 'phone'], [1,2,3,4,5,6]);
+		$this->column_title = array('ID Dosen','Nama Dosen', 'NIP', 'Username', 'Email', 'Alamat', 'Nomor HP', 'Foto');
+		$this->ajax_field = array(['id','nama', 'nip', 'username', 'email', 'alamat', 'phone', 'photo'], [1,2,3,4,5,6]);
 		$this->validation = array(
 			'nama' => 'required|string|max:100',
 			'nip' => 'required|numeric',
@@ -101,7 +101,8 @@ class DosenController extends Controller
 							'users.username as username',
 							'dosen.email as email',
 							'dosen.alamat as alamat',
-							'dosen.nip as nip'
+							'dosen.nip as nip',
+							'users.photo'
 						]);
 
 		$datatables = Datatables::of($data);
@@ -111,6 +112,9 @@ class DosenController extends Controller
 
 		return $datatables
 			->orderColumn('dosen', 'dosen $1')
+			->editColumn('photo', function ($data) {
+				return "<img src='".asset('uploads'.'/'.$data->photo)."' alt='Photo' max-height='50px'>";
+			})
 			->addColumn('action', function ($data) {
 				$update = "";
 				$validate = "";

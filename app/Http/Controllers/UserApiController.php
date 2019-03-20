@@ -47,7 +47,7 @@ class UserApiController extends Controller
         }
 
         $return['status'] = "success";
-        $return['message'] = "Login Successfully";
+        $return['message'] = "Login Success";
         DB::statement(DB::raw('set @path="'.asset('uploads').'"'));
         $return['data']['user'] = User::leftJoin('dosen', 'users.id', 'dosen.id_user')
                                         ->where('users.id', $user->id)
@@ -171,7 +171,7 @@ class UserApiController extends Controller
 
         if ($this->checkPresensi($request->id, $mhs->id_user)) {
             $return['status'] = "failed";
-            $return['message'] = "Presensi already inserted.";
+            $return['message'] = "Mahasiswa sudah melakukan presensi.";
             $return['data'] = "";
 
             return response()->json($return);
@@ -199,9 +199,18 @@ class UserApiController extends Controller
         $presensi->created_by = $user->id;
         $presensi->save();
 
+        $mhs = User::leftJoin('mahasiswa', 'users.id', 'mahasiswa.id_user')
+                    ->whereNull('mahasiswa.deleted_at')
+                    ->where('users.id', $presensi->id_user_mahasiswa);
+                    ->first();
+
+        $dataReturn['nama'] = $mhs->name;
+        $dataReturn['nim'] = $mhs->nim;
+        $dataReturn['waktu_presensi'] = date('H:i', strtotime($presensi->created_at));
+
         $return['status'] = "success";
-        $return['message'] = "Presensi successfully added.";
-        $return['data'] = $presensi;
+        $return['message'] = "Presensi berhasil ditambahkan.";
+        $return['data'] = $dataReturn;
 
         return response()->json($return);
     }
