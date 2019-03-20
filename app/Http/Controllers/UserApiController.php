@@ -201,7 +201,7 @@ class UserApiController extends Controller
 
         $mhs = User::leftJoin('mahasiswa', 'users.id', 'mahasiswa.id_user')
                     ->whereNull('mahasiswa.deleted_at')
-                    ->where('users.id', $presensi->id_user_mahasiswa);
+                    ->where('users.id', $presensi->id_user_mahasiswa)
                     ->first();
 
         $dataReturn['nama'] = $mhs->name;
